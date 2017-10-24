@@ -12,6 +12,7 @@
 		041E2BB01F9EF0370036687C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 041E2BAF1F9EF0370036687C /* Assets.xcassets */; };
 		041E2BB31F9EF0370036687C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041E2BB11F9EF0370036687C /* Main.storyboard */; };
 		041E2BBC1F9EF3450036687C /* FloatingPannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041E2BBB1F9EF3450036687C /* FloatingPannel.swift */; };
+		145F4DBB4369B80B239E19AE /* Pods_FloatingToggl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3256CA209129AD71D5691BF /* Pods_FloatingToggl.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,9 @@
 		041E2BB41F9EF0370036687C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		041E2BB51F9EF0370036687C /* FloatingToggl.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FloatingToggl.entitlements; sourceTree = "<group>"; };
 		041E2BBB1F9EF3450036687C /* FloatingPannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPannel.swift; sourceTree = "<group>"; };
+		60799DCC63FBAD0197655FF4 /* Pods-FloatingToggl.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FloatingToggl.release.xcconfig"; path = "Pods/Target Support Files/Pods-FloatingToggl/Pods-FloatingToggl.release.xcconfig"; sourceTree = "<group>"; };
+		6A61B7517328FB18AF3456FF /* Pods-FloatingToggl.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FloatingToggl.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FloatingToggl/Pods-FloatingToggl.debug.xcconfig"; sourceTree = "<group>"; };
+		B3256CA209129AD71D5691BF /* Pods_FloatingToggl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FloatingToggl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -30,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				145F4DBB4369B80B239E19AE /* Pods_FloatingToggl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +46,8 @@
 			children = (
 				041E2BAA1F9EF0370036687C /* FloatingToggl */,
 				041E2BA91F9EF0370036687C /* Products */,
+				AB897BA953C7D862BCC1F2D0 /* Pods */,
+				780D2B765342EE4AC0115021 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -66,6 +73,23 @@
 			path = FloatingToggl;
 			sourceTree = "<group>";
 		};
+		780D2B765342EE4AC0115021 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B3256CA209129AD71D5691BF /* Pods_FloatingToggl.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AB897BA953C7D862BCC1F2D0 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6A61B7517328FB18AF3456FF /* Pods-FloatingToggl.debug.xcconfig */,
+				60799DCC63FBAD0197655FF4 /* Pods-FloatingToggl.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -73,9 +97,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 041E2BB81F9EF0370036687C /* Build configuration list for PBXNativeTarget "FloatingToggl" */;
 			buildPhases = (
+				935FB9A47B402FC264260B60 /* [CP] Check Pods Manifest.lock */,
 				041E2BA41F9EF0370036687C /* Sources */,
 				041E2BA51F9EF0370036687C /* Frameworks */,
 				041E2BA61F9EF0370036687C /* Resources */,
+				2393EEAA077E0401FCB18BD5 /* [CP] Embed Pods Frameworks */,
+				5C66BE3562F1F3F655714C6E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -131,6 +158,62 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2393EEAA077E0401FCB18BD5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-FloatingToggl/Pods-FloatingToggl-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
+				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FloatingToggl/Pods-FloatingToggl-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5C66BE3562F1F3F655714C6E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FloatingToggl/Pods-FloatingToggl-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		935FB9A47B402FC264260B60 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FloatingToggl-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		041E2BA41F9EF0370036687C /* Sources */ = {
@@ -265,6 +348,7 @@
 		};
 		041E2BB91F9EF0370036687C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6A61B7517328FB18AF3456FF /* Pods-FloatingToggl.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = FloatingToggl/FloatingToggl.entitlements;
@@ -281,6 +365,7 @@
 		};
 		041E2BBA1F9EF0370036687C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 60799DCC63FBAD0197655FF4 /* Pods-FloatingToggl.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = FloatingToggl/FloatingToggl.entitlements;
