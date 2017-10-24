@@ -12,12 +12,13 @@ class FloatingPannel: NSWindowController {
 
     override func windowDidLoad() {
         super.windowDidLoad()
-
-        if let panel = self.window as? NSPanel {
-            panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-            panel.isFloatingPanel = true
+        guard let panel = self.window as? NSPanel else {
+            fatalError("Not loading")
         }
-
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        panel.isFloatingPanel = true
+        panel.titleVisibility = .hidden
+        panel.titlebarAppearsTransparent = true
     }
 
 }
