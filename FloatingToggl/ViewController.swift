@@ -47,21 +47,44 @@ private extension URL {
 struct Endpoint<T: Decodable> {
     let method: String
     let url: URL
+    let body: NSDictionary?
+
+    init(method: String = "GET", url: URL, body: NSDictionary? = nil) {
+        self.method = method
+        self.url = url
+        self.body = body
+    }
 
     func request(with token: String) -> Observable<T> {
         return Observable.deferred({ () -> Observable<T> in
             let base64 = "\(token):api_token".data(using: .utf8)!.base64EncodedString()
-            var request = URLRequest(url: URL(string: "https://www.toggl.com/api/v8/me?with_related_data=true")!)
+            var request = URLRequest(url: self.url)
             request.addValue("Basic \(base64)", forHTTPHeaderField: "Authorization")
+            request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
             request.httpMethod = self.method
+            if let body = self.body {
+                request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
+            }
             return URLSession.shared.rx.data(request: request).map({ data in
                 (try JSONDecoder().decode(DataResponse<T>.self, from: data)).data
             })
         })
     }
 
-    static var me: Endpoint<User> { return Endpoint<User>(method: "GET", url: URL.api("me?with_related_data=true")) }
-    static var currentEntry: Endpoint<Optional<TimeEntry>> { return Endpoint<Optional<TimeEntry>>(method: "GET", url: URL.api("time_entries/current")) }
+    static var me: Endpoint<User> { return Endpoint<User>(url: URL.api("me?with_related_data=true")) }
+
+    static var currentEntry: Endpoint<Optional<TimeEntry>> { return Endpoint<Optional<TimeEntry>>(url: URL.api("time_entries/current")) }
+
+    static func start(title: String, projectId: Int64?) -> Endpoint<TimeEntry> {
+        return Endpoint<TimeEntry>(method: "POST", url: URL.api("time_entries/start"), body: [
+            "time_entry": [
+                "description": title,
+                "pid": projectId ?? NSNull(),
+                "created_with": "Toggl Bar"
+            ] as NSDictionary
+        ])
+    }
+
 }
 
 
@@ -92,7 +115,7 @@ class TogglViewModel {
                 let predicate = NSPredicate(format: "SELF contains[c] %@", input)
                 return completion.filter({$0 != input && predicate.evaluate(with: $0 as NSString)})
             })
-        })
+        }).debounce(0.2)
     }
 
     init() {
@@ -122,6 +145,21 @@ class TogglViewModel {
             }
             return Driver<User?>.just(nil)
         }).debug().drive(user).disposed(by: self.disposeBag)
+    }
+
+    func startTimer() {
+        guard let token = self.token.value else { return }
+        let projectId = self.input.value.hashKey.flatMap({ projectName in
+            self.user.value?.projects.first(where: {
+                $0.name.lowercased() == projectName.lowercased()
+            })
+        })?.id
+        Endpoint<TimeEntry>.start(title: self.input.value, projectId: projectId)
+            .request(with: token)
+            .map(Optional.some)
+            .catchErrorJustReturn(nil)
+            .bind(to: current)
+            .disposed(by: self.disposeBag)
     }
 
 }
@@ -184,6 +222,13 @@ class ViewController: NSViewController {
 
     var recentItems: [String] = [] {
         didSet {
+            self.tableView.reloadData()
+            let numberOfRows = min(recentItems.count, 8)
+            let size = CGSize(
+                width: self.view.bounds.width,
+                height: CGFloat(numberOfRows) * (self.tableView.rowHeight + self.tableView.intercellSpacing.height)
+            )
+            self.recentItemVC.contentSize = size
             if inputLabel.stringValue.isEmpty { return }
             self.isShowingRecentEntries = !recentItems.isEmpty
         }
@@ -198,15 +243,15 @@ class ViewController: NSViewController {
         viewModel.completions.drive(onNext: {[weak self] completions in
             guard let `self` = self else { return }
             self.recentItems = completions
-            let numberOfRows = min(completions.count, 8)
-            let size = CGSize(
-                width: self.view.bounds.width,
-                height: CGFloat(numberOfRows) * (self.tableView.rowHeight + self.tableView.intercellSpacing.height)
-            )
-            self.recentItemVC.contentSize = size
-            self.tableView.reloadData()
             self.selectedRow = 0
         }).disposed(by: self.disposeBag)
+    }
+
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        if viewModel.token.value == nil {
+            self.presentSetToken()
+        }
     }
 
     var isShowingRecentEntries: Bool {
@@ -219,7 +264,6 @@ class ViewController: NSViewController {
             if newValue {
                 guard !recentItems.isEmpty else { return }
                 recentItemVC.show(relativeTo: .zero, of: self.view, preferredEdge: .minY)
-                self.selectedRow = 0
             } else {
                 recentItemVC.close()
             }
@@ -230,7 +274,7 @@ class ViewController: NSViewController {
         self.isShowingRecentEntries = !self.isShowingRecentEntries
     }
 
-    @IBAction func setToken(_ sender: NSMenuItem) {
+    func presentSetToken() {
         let alert = NSAlert()
         alert.alertStyle = .informational
         alert.messageText = "Toggl API Token:\nhttps://toggl.com/app/profile"
@@ -249,6 +293,10 @@ class ViewController: NSViewController {
         tokenField.becomeFirstResponder()
     }
 
+    @IBAction func setToken(_ sender: NSMenuItem) {
+        presentSetToken()
+    }
+
 
     override var representedObject: Any? {
         didSet {
@@ -262,6 +310,7 @@ class ViewController: NSViewController {
         }
         set {
             let index: Int
+            if tableView.numberOfRows == 0 { return }
             if newValue < 0 {
                 index = tableView.numberOfRows - 1
             } else if newValue >= tableView.numberOfRows {
@@ -284,6 +333,7 @@ extension ViewController: NSTextFieldDelegate {
         inputLabel.stringValue = recentItems[self.selectedRow]
         viewModel.input.value = recentItems[self.selectedRow]
         isShowingRecentEntries = false
+        inputLabel.currentEditor()?.selectedRange.length = 0
     }
 
     func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
@@ -304,7 +354,11 @@ extension ViewController: NSTextFieldDelegate {
                 insertSelection()
             }
         case #selector(textView.insertNewline(_:)):
-            insertSelection()
+            if isShowingRecentEntries {
+                insertSelection()
+            } else {
+                self.viewModel.startTimer()
+            }
         default:
             return false
         }
@@ -377,6 +431,25 @@ private extension ViewController {
                 .foregroundColor: NSColor(white: 1, alpha: 0.4),
                 .font: NSFont.systemFont(ofSize: 15)
             ])
+    }
+
+}
+
+private extension String {
+
+    var hashKey: String? {
+        do {
+            let regex = try NSRegularExpression(pattern: "#([^ ]+)( |$)", options: [])
+            let ns = (self as NSString)
+            return regex.matches(in: self, options: [], range: NSRange(location: 0, length: ns.length))
+                .first
+                .flatMap({ result in
+                    guard result.numberOfRanges > 1 else { return nil }
+                    return ns.substring(with: result.range(at: 1))
+                })
+        } catch {
+            return nil
+        }
     }
 
 }
