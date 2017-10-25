@@ -85,6 +85,10 @@ struct Endpoint<T: Decodable> {
         ])
     }
 
+    static func stop(timeEntry: Int64) -> Endpoint<TimeEntry> {
+        return Endpoint<TimeEntry>(method: "PUT", url: URL.api("time_entries/\(timeEntry)/stop"))
+    }
+
 }
 
 
@@ -157,6 +161,16 @@ class TogglViewModel {
         Endpoint<TimeEntry>.start(title: self.input.value, projectId: projectId)
             .request(with: token)
             .map(Optional.some)
+            .catchErrorJustReturn(nil)
+            .bind(to: current)
+            .disposed(by: self.disposeBag)
+    }
+
+    func stopTimer() {
+        guard let token = self.token.value else { return }
+        guard let entryId = self.current.value?.id else { return }
+        Endpoint<TimeEntry>.stop(timeEntry: entryId).request(with: token)
+            .map({_ in nil})
             .catchErrorJustReturn(nil)
             .bind(to: current)
             .disposed(by: self.disposeBag)
@@ -245,6 +259,34 @@ class ViewController: NSViewController {
             self.recentItems = completions
             self.selectedRow = 0
         }).disposed(by: self.disposeBag)
+
+        let df = DateFormatter()
+        df.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+
+        viewModel.current.asDriver().flatMapLatest({ entry -> Driver<String> in
+            guard let start = entry?.start, let date = df.date(from: start) else { return .empty() }
+            return Driver<Int>.interval(1).startWith(1).map({ _ in
+                let time: Int = Int(Date().timeIntervalSince(date))
+                let hours = time / 3600
+                let minutes = (time / 60) % 60
+                let seconds = time % 60
+                return String(format: "%0.2d:%0.2d:%0.2d", hours, minutes, seconds)
+            })
+        }).drive(onNext: {[weak self] text in
+            self?.timerLabel.stringValue = text
+        }).disposed(by: self.disposeBag)
+
+        viewModel.current.asDriver().distinctUntilChanged({
+            ($0 == nil) == ($1 == nil)
+        }).drive(onNext: {[weak self] current in
+            let text = current?.description ?? ""
+            self?.inputLabel.stringValue = text
+            self?.viewModel.input.value = text
+            self?.inputLabel.currentEditor()?.selectedRange.length = 0
+            self?.inputLabel.window?.makeFirstResponder(nil)
+            self?.timerLabel.isHidden = current == nil
+            self?.actionButton.isHidden = current == nil
+        }).disposed(by: self.disposeBag)
     }
 
     override func viewDidAppear() {
@@ -272,6 +314,10 @@ class ViewController: NSViewController {
 
     @IBAction func presentRecentEntries(_ sender: NSMenuItem) {
         self.isShowingRecentEntries = !self.isShowingRecentEntries
+    }
+
+    @IBAction func stopTimer(_ sender: NSButton) {
+        self.viewModel.stopTimer()
     }
 
     func presentSetToken() {

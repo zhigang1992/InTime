@@ -370,11 +370,11 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="FloatingToggl" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="558" height="60"/>
+                        <rect key="frame" x="0.0" y="0.0" width="580" height="60"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wu7-dI-dhr">
-                                <rect key="frame" x="20" y="0.0" width="538" height="60"/>
+                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wu7-dI-dhr">
+                                <rect key="frame" x="20" y="0.0" width="560" height="60"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="247" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BPy-6c-wmT">
                                         <rect key="frame" x="-2" y="20.5" width="438" height="19"/>
@@ -391,23 +391,26 @@
                                         </connections>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TdA-qV-FLw">
-                                        <rect key="frame" x="432" y="20.5" width="53" height="19"/>
+                                        <rect key="frame" x="442" y="19.5" width="55" height="21"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="1:17:28" id="7aI-t8-bK1">
-                                            <font key="font" metaFont="system" size="15"/>
+                                            <font key="font" size="15" name="HelveticaNeue"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="kag-yT-y1V">
-                                        <rect key="frame" x="483" y="2.5" width="55" height="55"/>
+                                        <rect key="frame" x="505" y="2.5" width="55" height="55"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="55" id="Gyb-XX-9Vm"/>
                                             <constraint firstAttribute="width" secondItem="kag-yT-y1V" secondAttribute="height" id="Xf4-F1-gUv"/>
                                         </constraints>
-                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="Start" imagePosition="overlaps" alignment="center" alternateImage="Stop" inset="2" id="LaA-Fa-c8O">
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="Stop" imagePosition="overlaps" alignment="center" inset="2" id="LaA-Fa-c8O">
                                             <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
+                                        <connections>
+                                            <action selector="stopTimer:" target="XfG-lQ-9wD" id="inY-Be-XVl"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
@@ -444,7 +447,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Start" width="30" height="40"/>
         <image name="Stop" width="40" height="40"/>
     </resources>
 </document>

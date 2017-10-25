@@ -5,6 +5,6 @@ import RxSwift
 import PlaygroundSupport
 
 
-PlaygroundPage.current.needsIndefiniteExecution = true
-
-print("Hello")
+let f = DateFormatter()
+f.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+f.date(from: "2017-10-25T08:01:26Z")
