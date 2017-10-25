@@ -67,6 +67,11 @@
                                                 <action selector="setToken:" target="Voe-Tx-rLC" id="RFf-VD-ph1"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Recent Entries" keyEquivalent="r" id="5we-8M-tCl" userLabel="Recent Entries">
+                                            <connections>
+                                                <action selector="presentRecentEntries:" target="Ady-hI-5gd" id="KOY-hg-2Ru"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
