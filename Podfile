@@ -8,6 +8,7 @@ target 'FloatingToggl' do
   # Pods for FloatingToggl
   pod 'RxSwift'
   pod 'RxCocoa'
+  pod 'KeychainSwift'
 
 end
 

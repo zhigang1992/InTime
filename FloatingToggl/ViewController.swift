@@ -17,6 +17,20 @@ class ViewController: NSViewController {
 
     @IBOutlet weak var actionButton: NSButton!
 
+    var tableView: NSTableView {
+        let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("text"))
+        column.isEditable = false
+        column.width = 500
+        let tableView = NSTableView()
+        tableView.selectionHighlightStyle = .regular
+        tableView.rowSizeStyle = .small
+        tableView.intercellSpacing = NSSize(width: 20, height: 3)
+        tableView.headerView = nil
+        tableView.refusesFirstResponder = true
+        tableView.target = self
+        return tableView
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.timerLabel.isHidden = true
@@ -32,20 +46,6 @@ class ViewController: NSViewController {
 
 
 }
-
-extension ViewController: NSTextFieldDelegate {
-
-    func control(_ control: NSControl, textView: NSTextView, completions words: [String], forPartialWordRange charRange: NSRange, indexOfSelectedItem index: UnsafeMutablePointer<Int>) -> [String] {
-        return words
-    }
-
-//    override func controlTextDidChange(_ obj: Notification) {
-//        guard let fieldEditor = obj.userInfo?["NSFieldEditor"] as? NSTextView else { return }
-////        fieldEditor.complete(nil)
-//    }
-
-}
-
 
 private extension ViewController {
 

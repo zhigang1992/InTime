@@ -1,16 +1,19 @@
 PODS:
+  - KeychainSwift (8.0.2)
   - RxCocoa (3.6.1):
     - RxSwift (~> 3.6)
   - RxSwift (3.6.1)
 
 DEPENDENCIES:
+  - KeychainSwift
   - RxCocoa
   - RxSwift
 
 SPEC CHECKSUMS:
+  KeychainSwift: 213db04dfe7244988e61f77c72a2afb2f775954a
   RxCocoa: 84a08739ab186248c7f31ce4ee92d6f8a947d690
   RxSwift: f9de85ea20cd2f7716ee5409fc13523dc638e4e4
 
-PODFILE CHECKSUM: f6447ba2728eb9ca94647f84fcf6c043ca15a015
+PODFILE CHECKSUM: 2ff1ecfdbeb49f2b0872a44c758fc852e39c2197
 
 COCOAPODS: 1.3.1
