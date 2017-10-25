@@ -64,7 +64,7 @@
                                     <items>
                                         <menuItem title="Set Token" keyEquivalent="t" id="Bw7-FT-i3A">
                                             <connections>
-                                                <action selector="setToken:" target="Voe-Tx-rLC" id="RFf-VD-ph1"/>
+                                                <action selector="setToken:" target="Ady-hI-5gd" id="0Sf-pW-qvq"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Recent Entries" keyEquivalent="r" id="5we-8M-tCl" userLabel="Recent Entries">
@@ -386,6 +386,9 @@
                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
+                                        <connections>
+                                            <outlet property="delegate" destination="XfG-lQ-9wD" id="0LA-TH-cmr"/>
+                                        </connections>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TdA-qV-FLw">
                                         <rect key="frame" x="432" y="20.5" width="53" height="19"/>
@@ -431,7 +434,7 @@
                     </view>
                     <connections>
                         <outlet property="actionButton" destination="kag-yT-y1V" id="U2W-2O-Tg6"/>
-                        <outlet property="inputLabel" destination="Yb4-dr-ehw" id="xsw-IJ-Oqo"/>
+                        <outlet property="inputLabel" destination="BPy-6c-wmT" id="3hg-bl-3Px"/>
                         <outlet property="timerLabel" destination="TdA-qV-FLw" id="GbL-H7-Wyb"/>
                     </connections>
                 </viewController>
