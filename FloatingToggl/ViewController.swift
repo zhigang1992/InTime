@@ -104,6 +104,8 @@ class TogglViewModel {
 
     let input = Variable<String>("")
 
+    let active = Variable<Bool>(NSApplication.shared.isActive)
+
     private let disposeBag = DisposeBag()
 
     var completions: Driver<[String]> {
@@ -132,6 +134,23 @@ class TogglViewModel {
                 self?.keychain.delete(tokenKey)
             }
         }).disposed(by: self.disposeBag)
+
+        Observable.merge([
+            NotificationCenter.default.rx
+                .notification(NSApplication.didBecomeActiveNotification)
+                .map({_ in true}),
+            NotificationCenter.default.rx
+                .notification(NSApplication.willResignActiveNotification)
+                .map({_ in false})
+        ]).bind(to: self.active).disposed(by: self.disposeBag)
+
+        self.active.asDriver()
+            .distinctUntilChanged()
+            .filter({$0})
+            .map({_ in ()})
+            .drive(refresh)
+            .disposed(by: self.disposeBag)
+
         token.asDriver().flatMapLatest({ token -> Driver<TimeEntry?> in
             if let token = token {
                 return self.refresh.asDriver(onErrorJustReturn: ()).startWith(()).flatMapLatest({_ in
@@ -143,9 +162,11 @@ class TogglViewModel {
             return Driver<TimeEntry?>.just(nil)
         }).debug().drive(current).disposed(by: self.disposeBag)
 
-        token.asDriver().flatMapLatest({ token -> Driver<User?> in
+        token.asDriver().flatMapLatest({[weak self] token -> Driver<User?> in
             if let token = token {
-                return Endpoint<User>.me.request(with: token).map(Optional.some).asDriver(onErrorJustReturn: nil)
+                return self?.current.asDriver().flatMapLatest({ _ in
+                    Endpoint<User>.me.request(with: token).map(Optional.some).asDriver(onErrorJustReturn: nil)
+                }) ?? .just(nil)
             }
             return Driver<User?>.just(nil)
         }).debug().drive(user).disposed(by: self.disposeBag)
@@ -178,6 +199,17 @@ class TogglViewModel {
 
 }
 
+class AutoGrowTextField: NSTextField {
+
+    override var intrinsicContentSize: NSSize {
+        self.isEditable = false
+        defer {
+            self.isEditable = true
+        }
+        return super.intrinsicContentSize
+    }
+
+}
 
 class ViewController: NSViewController {
 
@@ -276,17 +308,31 @@ class ViewController: NSViewController {
             self?.timerLabel.stringValue = text
         }).disposed(by: self.disposeBag)
 
-        viewModel.current.asDriver().distinctUntilChanged({
-            ($0 == nil) == ($1 == nil)
-        }).drive(onNext: {[weak self] current in
-            let text = current?.description ?? ""
-            self?.inputLabel.stringValue = text
-            self?.viewModel.input.value = text
-            self?.inputLabel.currentEditor()?.selectedRange.length = 0
-            self?.inputLabel.window?.makeFirstResponder(nil)
+        viewModel.current.asDriver().drive(onNext: {[weak self] current in
             self?.timerLabel.isHidden = current == nil
             self?.actionButton.isHidden = current == nil
+            if let current = current {
+                let text = current.description ?? "Untitled"
+                self?.inputLabel.stringValue = text
+                self?.viewModel.input.value = text
+                self?.isShowingRecentEntries = false
+                self?.inputLabel.window?.makeFirstResponder(nil)
+            } else {
+                self?.inputLabel.stringValue = ""
+                self?.viewModel.input.value = ""
+            }
+            self?.placeCursorAtTheEnd()
+            self?.resizeWindow()
         }).disposed(by: self.disposeBag)
+    }
+
+    var trackingRect: NSView.TrackingRectTag?
+    override func viewDidLayout() {
+        super.viewDidLayout()
+        if let t = trackingRect {
+            view.removeTrackingRect(t)
+        }
+        trackingRect = view.addTrackingRect(view.bounds, owner: self, userData: nil, assumeInside: false)
     }
 
     override func viewDidAppear() {
@@ -305,6 +351,8 @@ class ViewController: NSViewController {
 
             if newValue {
                 guard !recentItems.isEmpty else { return }
+                guard inputLabel.currentEditor()?.selectedRange.length == 0 else { return }
+
                 recentItemVC.show(relativeTo: .zero, of: self.view, preferredEdge: .minY)
             } else {
                 recentItemVC.close()
@@ -312,12 +360,26 @@ class ViewController: NSViewController {
         }
     }
 
+    func resizeWindow() {
+        guard let window = self.view.window else { return }
+        let minSize = self.view.fittingSize
+        window.setFrame(NSRect(origin: window.frame.origin, size: minSize), display: true)
+    }
+
+
     @IBAction func presentRecentEntries(_ sender: NSMenuItem) {
         self.isShowingRecentEntries = !self.isShowingRecentEntries
     }
 
     @IBAction func stopTimer(_ sender: NSButton) {
         self.viewModel.stopTimer()
+    }
+
+    func placeCursorAtTheEnd() {
+        guard let editor = self.inputLabel.currentEditor() else { return }
+
+        let string = self.inputLabel.stringValue as NSString
+        editor.selectedRange = NSRange(location: string.length, length: 0)
     }
 
     func presentSetToken() {
@@ -379,7 +441,7 @@ extension ViewController: NSTextFieldDelegate {
         inputLabel.stringValue = recentItems[self.selectedRow]
         viewModel.input.value = recentItems[self.selectedRow]
         isShowingRecentEntries = false
-        inputLabel.currentEditor()?.selectedRange.length = 0
+        self.placeCursorAtTheEnd()
     }
 
     func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
@@ -393,18 +455,9 @@ extension ViewController: NSTextFieldDelegate {
             selectedRow = selectedRow + 1
             isShowingRecentEntries = true
         case #selector(textView.insertTab(_:)):
-            if recentItems.count > 1 {
-                selectedRow = selectedRow + 1
-                isShowingRecentEntries = true
-            } else if recentItems.count == 1 {
-                insertSelection()
-            }
+            insertSelection()
         case #selector(textView.insertNewline(_:)):
-            if isShowingRecentEntries {
-                insertSelection()
-            } else {
-                self.viewModel.startTimer()
-            }
+            self.viewModel.startTimer()
         default:
             return false
         }
@@ -414,7 +467,6 @@ extension ViewController: NSTextFieldDelegate {
     override func controlTextDidChange(_ obj: Notification) {
         self.viewModel.input.value = inputLabel.stringValue
     }
-
 }
 
 extension ViewController: NSTableViewDelegate, NSTableViewDataSource {
@@ -433,6 +485,7 @@ extension ViewController: NSTableViewDelegate, NSTableViewDataSource {
             textField.drawsBackground = false
             textField.isEditable = false
             textField.isSelectable = false
+            textField.usesSingleLineMode = true
             cell.addSubview(textField)
             cell.textField = textField
             cell.identifier = ViewController.identity

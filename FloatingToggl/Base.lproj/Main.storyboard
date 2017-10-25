@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
@@ -347,11 +346,11 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController showSeguePresentationStyle="single" id="B8D-0N-5wS" customClass="FloatingPannel" customModule="FloatingToggl" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="NSPanel">
+                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="NSPanel">
                         <windowStyleMask key="styleMask" titled="YES" resizable="YES" utility="YES" nonactivatingPanel="YES" HUD="YES" fullSizeContentView="YES"/>
                         <windowCollectionBehavior key="collectionBehavior" moveToActiveSpace="YES"/>
-                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="585" y="830" width="480" height="100"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="95" y="73" width="426" height="100"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="98r-iN-zZc"/>
@@ -363,23 +362,23 @@
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="250"/>
+            <point key="canvasLocation" x="2" y="250"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="FloatingToggl" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="580" height="60"/>
+                        <rect key="frame" x="0.0" y="0.0" width="364" height="60"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wu7-dI-dhr">
-                                <rect key="frame" x="20" y="0.0" width="560" height="60"/>
+                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="20" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wu7-dI-dhr">
+                                <rect key="frame" x="20" y="0.0" width="324" height="60"/>
                                 <subviews>
-                                    <textField horizontalHuggingPriority="247" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BPy-6c-wmT">
-                                        <rect key="frame" x="-2" y="20.5" width="438" height="19"/>
+                                    <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="999" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BPy-6c-wmT" customClass="AutoGrowTextField" customModule="FloatingToggl" customModuleProvider="target">
+                                        <rect key="frame" x="-2" y="20.5" width="197" height="19"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="Tug-Tb-Szc"/>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="Tug-Tb-Szc"/>
                                         </constraints>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" placeholderString="What are you working on?" usesSingleLineMode="YES" id="Yb4-dr-ehw">
                                             <font key="font" metaFont="system" size="15"/>
@@ -391,7 +390,7 @@
                                         </connections>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TdA-qV-FLw">
-                                        <rect key="frame" x="442" y="19.5" width="55" height="21"/>
+                                        <rect key="frame" x="211" y="19.5" width="55" height="21"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="1:17:28" id="7aI-t8-bK1">
                                             <font key="font" size="15" name="HelveticaNeue"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -399,10 +398,9 @@
                                         </textFieldCell>
                                     </textField>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="kag-yT-y1V">
-                                        <rect key="frame" x="505" y="2.5" width="55" height="55"/>
+                                        <rect key="frame" x="284" y="2.5" width="40" height="55"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="55" id="Gyb-XX-9Vm"/>
-                                            <constraint firstAttribute="width" secondItem="kag-yT-y1V" secondAttribute="height" id="Xf4-F1-gUv"/>
                                         </constraints>
                                         <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="Stop" imagePosition="overlaps" alignment="center" inset="2" id="LaA-Fa-c8O">
                                             <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
@@ -430,7 +428,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="wu7-dI-dhr" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="0Bk-A0-XKV"/>
-                            <constraint firstAttribute="trailing" secondItem="wu7-dI-dhr" secondAttribute="trailing" id="LPI-zO-QJY"/>
+                            <constraint firstAttribute="trailing" secondItem="wu7-dI-dhr" secondAttribute="trailing" constant="20" id="LPI-zO-QJY"/>
                             <constraint firstAttribute="bottom" secondItem="wu7-dI-dhr" secondAttribute="bottom" id="PMU-dI-y8Q"/>
                             <constraint firstItem="wu7-dI-dhr" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="fcA-No-1Cl"/>
                         </constraints>
@@ -443,7 +441,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="655"/>
+            <point key="canvasLocation" x="-140.5" y="654"/>
         </scene>
     </scenes>
     <resources>
