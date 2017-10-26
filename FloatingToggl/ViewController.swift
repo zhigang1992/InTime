@@ -108,6 +108,9 @@ class TogglViewModel {
 
     private let disposeBag = DisposeBag()
 
+    var screenSleptAt: Date?
+    var timeEntryWhenSlept: TimeEntry?
+
     var completions: Driver<[String]> {
         return user.asDriver().map({ user -> [String] in
             guard let user = user else { return [] }
@@ -170,6 +173,33 @@ class TogglViewModel {
             }
             return Driver<User?>.just(nil)
         }).debug().drive(user).disposed(by: self.disposeBag)
+
+        NSWorkspace.shared.notificationCenter
+            .rx.notification(NSWorkspace.screensDidSleepNotification)
+            .subscribe(onNext: {[weak self] _ in
+                guard let entry = self?.current.value else { return }
+                self?.timeEntryWhenSlept = entry
+                self?.screenSleptAt = Date()
+                self?.stopTimer()
+            }).disposed(by: self.disposeBag)
+
+        NSWorkspace.shared.notificationCenter
+            .rx.notification(NSWorkspace.screensDidWakeNotification)
+            .subscribe(onNext: {[weak self] _ in
+                guard
+                    let date = self?.screenSleptAt,
+                    let timer = self?.timeEntryWhenSlept,
+                    Date().timeIntervalSince(date) < 60 * 10
+                else {
+                    self?.screenSleptAt = nil
+                    self?.timeEntryWhenSlept = nil
+                    return
+                }
+
+                self?.input.value = timer.description ?? ""
+                self?.startTimer()
+            }).disposed(by: self.disposeBag)
+
     }
 
     func startTimer() {
