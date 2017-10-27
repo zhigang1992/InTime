@@ -89,6 +89,15 @@ struct Endpoint<T: Decodable> {
         return Endpoint<TimeEntry>(method: "PUT", url: URL.api("time_entries/\(timeEntry)/stop"))
     }
 
+    static func create(project: String) -> Endpoint<Project> {
+        return Endpoint<Project>.init(method: "POST", url: URL.api("projects"), body: [
+            "project": [
+                "name": project,
+                "is_private": true
+            ]
+        ] as NSDictionary)
+    }
+
 }
 
 
@@ -203,17 +212,47 @@ class TogglViewModel {
     }
 
     func startTimer() {
-        guard let token = self.token.value else { return }
-        let projectId = self.input.value.hashKey.flatMap({ projectName in
-            self.user.value?.projects.first(where: {
+        let inputValue = input.value
+        if let projectName = inputValue.hashKey {
+            if let existingProject = self.user.value?.projects.first(where: {
                 $0.name.lowercased() == projectName.lowercased()
-            })
-        })?.id
+            }) {
+                self.startTimer(input: inputValue, projectId: existingProject.id)
+            } else {
+                let alert = NSAlert()
+                alert.alertStyle = .informational
+                alert.messageText = "Project \(projectName) does not exist, should I create it?"
+                alert.addButton(withTitle: "Create")
+                alert.addButton(withTitle: "Cancel")
+                alert.beginSheetModal(for: NSApplication.shared.keyWindow!) {[weak self] (response) in
+                    guard response == .alertFirstButtonReturn else {
+                        self?.startTimer(input: inputValue, projectId: nil)
+                        return
+                    }
+                    _ = self?.createProject(name: projectName).subscribe(onNext: {[weak self] project in
+                        self?.startTimer(input: inputValue, projectId: project.id)
+                    }, onError: { _ in
+                        self?.startTimer(input: inputValue, projectId: nil)
+                    })
+                }
+            }
+        } else {
+            self.startTimer(input: inputValue, projectId: nil)
+        }
+    }
+
+    func createProject(name: String) -> Observable<Project> {
+        guard let token = self.token.value else { return .empty() }
+        return Endpoint<Project>.create(project: name).request(with: token)
+    }
+
+    func startTimer(input: String, projectId: Int64?) {
+        guard let token = self.token.value else { return }
         Endpoint<TimeEntry>.start(title: self.input.value, projectId: projectId)
             .request(with: token)
             .map(Optional.some)
             .catchErrorJustReturn(nil)
-            .bind(to: current)
+            .bind(to: self.current)
             .disposed(by: self.disposeBag)
     }
 
