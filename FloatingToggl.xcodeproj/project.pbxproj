@@ -16,7 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		041E2BA81F9EF0370036687C /* FloatingToggl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FloatingToggl.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		041E2BA81F9EF0370036687C /* Toggl Bar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Toggl Bar.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		041E2BAB1F9EF0370036687C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		041E2BAD1F9EF0370036687C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		041E2BAF1F9EF0370036687C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -54,7 +54,7 @@
 		041E2BA91F9EF0370036687C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				041E2BA81F9EF0370036687C /* FloatingToggl.app */,
+				041E2BA81F9EF0370036687C /* Toggl Bar.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -110,7 +110,7 @@
 			);
 			name = FloatingToggl;
 			productName = FloatingToggl;
-			productReference = 041E2BA81F9EF0370036687C /* FloatingToggl.app */;
+			productReference = 041E2BA81F9EF0370036687C /* Toggl Bar.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -361,7 +361,7 @@
 				INFOPLIST_FILE = FloatingToggl/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.matrix.FloatingToggl;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Toggl Bar";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
@@ -380,7 +380,7 @@
 				INFOPLIST_FILE = FloatingToggl/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.matrix.FloatingToggl;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Toggl Bar";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
