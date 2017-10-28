@@ -9,7 +9,7 @@ First you need to obtain your API token from:
 
 https://www.toggl.com/app/profile
 
-Download this app from https://github.com/zhigang1992/TogglBar/releases
+Download this app from https://github.com/zhigang1992/InTime/releases/tag/1.0.0
 
 And you're all set.
 
