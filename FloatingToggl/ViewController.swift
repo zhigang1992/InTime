@@ -80,7 +80,7 @@ struct Endpoint<T: Decodable> {
             "time_entry": [
                 "description": title,
                 "pid": projectId ?? NSNull(),
-                "created_with": "Toggl Bar"
+                "created_with": "In Time"
             ] as NSDictionary
         ])
     }
