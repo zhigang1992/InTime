@@ -31,8 +31,8 @@ struct User: Decodable {
 
     let id: Int64
     let fullname: String
-    let projects: [Project]
-    let time_entries: [TimeEntry]
+    let projects: [Project]?
+    let time_entries: [TimeEntry]?
 
 }
 
@@ -123,8 +123,8 @@ class TogglViewModel {
     var completions: Driver<[String]> {
         return user.asDriver().map({ user -> [String] in
             guard let user = user else { return [] }
-            let projects = user.projects.map({"#\($0.name)"})
-            let entries = user.time_entries.sorted(by: {$0.start > $1.start}).flatMap({$0.description})
+            let projects = user.projects?.map({"#\($0.name)"}) ?? []
+            let entries = user.time_entries?.sorted(by: {$0.start > $1.start}).flatMap({$0.description}) ?? []
             return Array(NSOrderedSet(array: projects + entries)).flatMap({$0 as? String})
         }).flatMapLatest({[weak self] (completion:[String]) -> Driver<[String]> in
             guard let input = self?.input else { return .just(completion) }
@@ -172,16 +172,16 @@ class TogglViewModel {
                 })
             }
             return Driver<TimeEntry?>.just(nil)
-        }).debug().drive(current).disposed(by: self.disposeBag)
+        }).drive(current).disposed(by: self.disposeBag)
 
         token.asDriver().flatMapLatest({[weak self] token -> Driver<User?> in
             if let token = token {
                 return self?.current.asDriver().flatMapLatest({ _ in
-                    Endpoint<User>.me.request(with: token).map(Optional.some).asDriver(onErrorJustReturn: nil)
+                    Endpoint<User>.me.request(with: token).map(Optional.some).debug("Test").asDriver(onErrorJustReturn: nil)
                 }) ?? .just(nil)
             }
             return Driver<User?>.just(nil)
-        }).debug().drive(user).disposed(by: self.disposeBag)
+        }).drive(user).disposed(by: self.disposeBag)
 
         NSWorkspace.shared.notificationCenter
             .rx.notification(NSWorkspace.screensDidSleepNotification)
@@ -214,7 +214,7 @@ class TogglViewModel {
     func startTimer() {
         let inputValue = input.value
         if let projectName = inputValue.hashKey {
-            if let existingProject = self.user.value?.projects.first(where: {
+            if let existingProject = self.user.value?.projects?.first(where: {
                 $0.name.lowercased() == projectName.lowercased()
             }) {
                 self.startTimer(input: inputValue, projectId: existingProject.id)
