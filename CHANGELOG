@@ -6,3 +6,5 @@ Changelog
 
 * In recent entries, sort project by usage.
 * When showing recent entries, enter key autocomplete instead of start timer.
+* Add option to reminder you at certain interval.
+* Add option to auto apply yes on interval timeout.
