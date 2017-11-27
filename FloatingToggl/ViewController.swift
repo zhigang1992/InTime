@@ -188,7 +188,7 @@ class TogglViewModel {
         token.asDriver().flatMapLatest({[weak self] token -> Driver<User?> in
             if let token = token {
                 return self?.current.asDriver().flatMapLatest({ _ in
-                    Endpoint<User>.me.request(with: token).map(Optional.some).debug("Test").asDriver(onErrorJustReturn: nil)
+                    Endpoint<User>.me.request(with: token).map(Optional.some).asDriver(onErrorJustReturn: nil)
                 }) ?? .just(nil)
             }
             return Driver<User?>.just(nil)
@@ -220,6 +220,17 @@ class TogglViewModel {
                 self?.startTimer()
             }).disposed(by: self.disposeBag)
 
+    }
+
+    var presentReminder: Observable<()> {
+        return Observable.merge([
+            NotificationCenter.default.rx.notification(.reminderIntervalUpdated).map({_ in ()}),
+            self.input.asObservable().distinctUntilChanged().map({_ in ()})
+        ]).flatMapLatest({ _ -> Observable<()> in
+            let interval = UserDefaults.standard.reminderInterval
+            if interval == 0 { return .empty() }
+            return Observable<Int>.interval(RxTimeInterval(interval * 60), scheduler: MainScheduler.asyncInstance).map({ _ in ()})
+        })
     }
 
     func startTimer() {
@@ -404,6 +415,10 @@ class ViewController: NSViewController {
             self?.placeCursorAtTheEnd()
             self?.resizeWindow()
         }).disposed(by: self.disposeBag)
+
+        viewModel.presentReminder.subscribe(onNext: {[weak self] in
+            self?.presentReminder()
+        }).disposed(by: disposeBag)
     }
 
     var trackingRect: NSView.TrackingRectTag?
@@ -479,6 +494,51 @@ class ViewController: NSViewController {
             self?.viewModel.token.value = tokenField.stringValue
         }
         tokenField.becomeFirstResponder()
+    }
+
+    func presentDontForget() {
+        let alert = NSAlert()
+        alert.alertStyle = .informational
+        alert.messageText = "Don't forget to track your time"
+        alert.beginSheetModal(for: self.view.window!, completionHandler: nil)
+    }
+
+    func presentReminder() {
+        guard let current = viewModel.current.value else {
+            presentDontForget()
+            return
+        }
+        let alert = NSAlert()
+        alert.alertStyle = .informational
+        alert.messageText = "Are you still working on \n \(current.description ?? "Untitled")"
+        let button = alert.addButton(withTitle: "YES")
+
+        var disposable: Disposable?
+
+        if UserDefaults.standard.shouldAutoApply {
+            let autoApplyInterval = 60
+            disposable = Observable<Int>.interval(1, scheduler: MainScheduler.asyncInstance)
+                .map({autoApplyInterval - $0})
+                .take(autoApplyInterval + 1)
+                .subscribe(onNext: {[weak self] countdown in
+                    if countdown > 0 {
+                        button.title = "YES (\(countdown))"
+                    } else if countdown == 0 {
+                        self?.view.window?.endSheet(alert.window)
+                    }
+                })
+
+            button.title = "YES (\(autoApplyInterval))"
+        }
+
+        alert.addButton(withTitle: "No")
+        alert.beginSheetModal(for: self.view.window!) { (response) in
+            disposable?.dispose()
+            if response == .alertSecondButtonReturn {
+                self.viewModel.stopTimer()
+                self.inputLabel.becomeFirstResponder()
+            }
+        }
     }
 
     @IBAction func setToken(_ sender: NSMenuItem) {

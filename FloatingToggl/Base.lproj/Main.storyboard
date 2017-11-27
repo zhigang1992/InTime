@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
@@ -293,26 +293,34 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Window" id="aUF-d1-5bR">
+                            <menuItem title="Reminder" id="aUF-d1-5bR">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Window" systemMenu="window" id="Td7-aD-5lo">
+                                <menu key="submenu" title="Reminder" systemMenu="window" id="Td7-aD-5lo">
                                     <items>
-                                        <menuItem title="Minimize" keyEquivalent="m" id="OY7-WF-poV">
-                                            <connections>
-                                                <action selector="performMiniaturize:" target="Ady-hI-5gd" id="VwT-WD-YPe"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Zoom" id="R4o-n2-Eq4">
+                                        <menuItem title="5 min" id="OY7-WF-poV">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="performZoom:" target="Ady-hI-5gd" id="DIl-cC-cCs"/>
+                                                <action selector="reminder5minTapped:" target="Voe-Tx-rLC" id="Wyl-dO-evG"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="30 min" id="R4o-n2-Eq4">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="reminder30minTapped:" target="Voe-Tx-rLC" id="vJT-TE-vap"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
-                                        <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
+                                        <menuItem title="None" state="on" id="LE2-aR-0XJ">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="arrangeInFront:" target="Ady-hI-5gd" id="DRN-fu-gQh"/>
+                                                <action selector="reminderNoneTapped:" target="Voe-Tx-rLC" id="wVc-dE-AmQ"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="3Tu-fH-Lk1"/>
+                                        <menuItem title="Auto Apply" id="ho0-J6-R08">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="autoApplyTapped:" target="Voe-Tx-rLC" id="Vax-TS-cKp"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -336,7 +344,14 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Toggl_Bar" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="In_Time" customModuleProvider="target">
+                    <connections>
+                        <outlet property="autoApply" destination="ho0-J6-R08" id="tBW-iT-pGt"/>
+                        <outlet property="fiveMinuteReminder" destination="OY7-WF-poV" id="tab-3t-lh3"/>
+                        <outlet property="noReminder" destination="LE2-aR-0XJ" id="73T-RG-g3y"/>
+                        <outlet property="thirtyMinuteReminder" destination="R4o-n2-Eq4" id="eOc-0v-Xgl"/>
+                    </connections>
+                </customObject>
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -345,10 +360,10 @@
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
             <objects>
-                <windowController showSeguePresentationStyle="single" id="B8D-0N-5wS" customClass="FloatingPannel" customModule="Toggl_Bar" customModuleProvider="target" sceneMemberID="viewController">
+                <windowController showSeguePresentationStyle="single" id="B8D-0N-5wS" customClass="FloatingPannel" customModule="In_Time" customModuleProvider="target" sceneMemberID="viewController">
                     <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="IQv-IB-iLA" customClass="NSPanel">
                         <windowStyleMask key="styleMask" titled="YES" resizable="YES" utility="YES" nonactivatingPanel="YES" HUD="YES" fullSizeContentView="YES"/>
-                        <windowCollectionBehavior key="collectionBehavior" moveToActiveSpace="YES"/>
+                        <windowCollectionBehavior key="collectionBehavior" moveToActiveSpace="YES" fullScreenNone="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="95" y="73" width="426" height="100"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
@@ -367,7 +382,7 @@
         <!--View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="Toggl_Bar" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="In_Time" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="364" height="60"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -375,7 +390,7 @@
                             <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="20" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wu7-dI-dhr">
                                 <rect key="frame" x="20" y="0.0" width="324" height="60"/>
                                 <subviews>
-                                    <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="999" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BPy-6c-wmT" customClass="AutoGrowTextField" customModule="Toggl_Bar" customModuleProvider="target">
+                                    <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="999" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BPy-6c-wmT" customClass="AutoGrowTextField" customModule="In_Time" customModuleProvider="target">
                                         <rect key="frame" x="-2" y="20.5" width="197" height="19"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="Tug-Tb-Szc"/>
