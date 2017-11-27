@@ -24,6 +24,7 @@
 		041E2BB41F9EF0370036687C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		041E2BB51F9EF0370036687C /* FloatingToggl.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FloatingToggl.entitlements; sourceTree = "<group>"; };
 		041E2BBB1F9EF3450036687C /* FloatingPannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPannel.swift; sourceTree = "<group>"; };
+		04D507151FCC84360038E7E0 /* CHANGELOG */ = {isa = PBXFileReference; lastKnownFileType = text; path = CHANGELOG; sourceTree = "<group>"; };
 		60799DCC63FBAD0197655FF4 /* Pods-FloatingToggl.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FloatingToggl.release.xcconfig"; path = "Pods/Target Support Files/Pods-FloatingToggl/Pods-FloatingToggl.release.xcconfig"; sourceTree = "<group>"; };
 		6A61B7517328FB18AF3456FF /* Pods-FloatingToggl.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FloatingToggl.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FloatingToggl/Pods-FloatingToggl.debug.xcconfig"; sourceTree = "<group>"; };
 		B3256CA209129AD71D5691BF /* Pods_FloatingToggl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FloatingToggl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +45,7 @@
 		041E2B9F1F9EF0370036687C = {
 			isa = PBXGroup;
 			children = (
+				04D507151FCC84360038E7E0 /* CHANGELOG */,
 				041E2BAA1F9EF0370036687C /* FloatingToggl */,
 				041E2BA91F9EF0370036687C /* Products */,
 				AB897BA953C7D862BCC1F2D0 /* Pods */,

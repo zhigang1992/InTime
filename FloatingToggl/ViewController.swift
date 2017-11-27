@@ -125,6 +125,7 @@ class TogglViewModel {
     let input = Variable<String>("")
 
     let active = Variable<Bool>(NSApplication.shared.isActive)
+    let awake = Variable<Bool>(true)
 
     private let disposeBag = DisposeBag()
 
@@ -197,6 +198,7 @@ class TogglViewModel {
         NSWorkspace.shared.notificationCenter
             .rx.notification(NSWorkspace.screensDidSleepNotification)
             .subscribe(onNext: {[weak self] _ in
+                self?.awake.value = false
                 guard let entry = self?.current.value else { return }
                 self?.timeEntryWhenSlept = entry
                 self?.screenSleptAt = Date()
@@ -206,6 +208,7 @@ class TogglViewModel {
         NSWorkspace.shared.notificationCenter
             .rx.notification(NSWorkspace.screensDidWakeNotification)
             .subscribe(onNext: {[weak self] _ in
+                self?.awake.value = true
                 guard
                     let date = self?.screenSleptAt,
                     let timer = self?.timeEntryWhenSlept,
@@ -224,11 +227,11 @@ class TogglViewModel {
 
     var presentReminder: Observable<()> {
         return Observable.merge([
-            self.active.asObservable().distinctUntilChanged().map({_ in ()}),
+            self.awake.asObservable().distinctUntilChanged().map({_ in ()}),
             NotificationCenter.default.rx.notification(.reminderIntervalUpdated).map({_ in ()}),
             self.input.asObservable().distinctUntilChanged().map({_ in ()})
         ]).flatMapLatest({[weak self] _ -> Observable<()> in
-            if self?.active.value != true { return .empty() }
+            if self?.awake.value != true { return .empty() }
             let interval = UserDefaults.standard.reminderInterval
             if interval == 0 { return .empty() }
             return Observable<Int>.interval(RxTimeInterval(interval * 60), scheduler: MainScheduler.asyncInstance).map({ _ in ()})
