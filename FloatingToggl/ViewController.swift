@@ -25,6 +25,7 @@ struct DataResponse<T: Decodable>: Decodable {
 struct Project: Decodable {
     let id: Int64
     let name: String
+    let at: Date
 }
 
 struct User: Decodable {
@@ -40,6 +41,16 @@ private extension URL {
 
     static func api(_ path: String) -> URL {
         return URL(string: "https://www.toggl.com/api/v8/\(path)")!
+    }
+
+}
+
+extension JSONDecoder {
+
+    static var toggle: JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
     }
 
 }
@@ -66,7 +77,7 @@ struct Endpoint<T: Decodable> {
                 request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
             }
             return URLSession.shared.rx.data(request: request).map({ data in
-                (try JSONDecoder().decode(DataResponse<T>.self, from: data)).data
+                (try JSONDecoder.toggle.decode(DataResponse<T>.self, from: data)).data
             })
         })
     }
@@ -123,7 +134,7 @@ class TogglViewModel {
     var completions: Driver<[String]> {
         return user.asDriver().map({ user -> [String] in
             guard let user = user else { return [] }
-            let projects = user.projects?.map({"#\($0.name)"}) ?? []
+            let projects = user.projects?.sorted(by: {$0.at > $1.at}).map({"#\($0.name)"}) ?? []
             let entries = user.time_entries?.sorted(by: {$0.start > $1.start}).flatMap({$0.description}) ?? []
             return Array(NSOrderedSet(array: projects + entries)).flatMap({$0 as? String})
         }).flatMapLatest({[weak self] (completion:[String]) -> Driver<[String]> in
