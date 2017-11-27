@@ -537,7 +537,11 @@ extension ViewController: NSTextFieldDelegate {
         case #selector(textView.insertTab(_:)):
             insertSelection()
         case #selector(textView.insertNewline(_:)):
-            self.viewModel.startTimer()
+            if isShowingRecentEntries {
+                insertSelection()
+            } else {
+                self.viewModel.startTimer()
+            }
         default:
             return false
         }
