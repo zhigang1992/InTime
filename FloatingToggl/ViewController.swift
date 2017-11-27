@@ -224,9 +224,11 @@ class TogglViewModel {
 
     var presentReminder: Observable<()> {
         return Observable.merge([
+            self.active.asObservable().distinctUntilChanged().map({_ in ()}),
             NotificationCenter.default.rx.notification(.reminderIntervalUpdated).map({_ in ()}),
             self.input.asObservable().distinctUntilChanged().map({_ in ()})
-        ]).flatMapLatest({ _ -> Observable<()> in
+        ]).flatMapLatest({[weak self] _ -> Observable<()> in
+            if self?.active.value != true { return .empty() }
             let interval = UserDefaults.standard.reminderInterval
             if interval == 0 { return .empty() }
             return Observable<Int>.interval(RxTimeInterval(interval * 60), scheduler: MainScheduler.asyncInstance).map({ _ in ()})
