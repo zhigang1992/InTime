@@ -540,6 +540,7 @@ class ViewController: NSViewController {
         alert.alertStyle = .informational
         alert.messageText = "Don't forget to track your time"
         alert.beginSheetModal(for: self.view.window!, completionHandler: nil)
+        alert.window.resignKey()
     }
 
     func presentReminder() {
@@ -558,7 +559,6 @@ class ViewController: NSViewController {
             let autoApplyInterval = 60
             disposable = Observable<Int>.interval(1, scheduler: MainScheduler.asyncInstance)
                 .map({autoApplyInterval - $0})
-                .take(autoApplyInterval + 1)
                 .subscribe(onNext: {[weak self] countdown in
                     if countdown > 0 {
                         button.title = "YES (\(countdown))"
@@ -578,6 +578,7 @@ class ViewController: NSViewController {
                 self.inputLabel.becomeFirstResponder()
             }
         }
+        alert.window.resignKey()
     }
 
     @IBAction func setToken(_ sender: NSMenuItem) {
