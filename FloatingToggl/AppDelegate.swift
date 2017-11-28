@@ -80,6 +80,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         reminderInterval = UserDefaults.standard.reminderInterval
         shouldAutoApply = UserDefaults.standard.shouldAutoApply
+
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

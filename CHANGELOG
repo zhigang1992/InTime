@@ -9,3 +9,4 @@ Changelog
 * Add option to reminder you at certain interval.
 * Add option to auto apply yes on interval timeout.
 * Disable reminder when computer went to sleep.
+* Keep break duration in timer if it's less than 10 min

@@ -14,7 +14,7 @@ import KeychainSwift
 
 struct TimeEntry: Decodable {
     let id: Int64
-    let start: String
+    let start: Date
     let description: String?
 }
 
@@ -45,12 +45,32 @@ private extension URL {
 
 }
 
+extension JSONEncoder {
+
+    static var toggle: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }
+
+}
+
 extension JSONDecoder {
 
     static var toggle: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return decoder
+    }
+
+}
+
+extension ISO8601DateFormatter {
+
+    static var toggle: ISO8601DateFormatter {
+        let formatter = ISO8601DateFormatter()
+        formatter.timeZone = .current
+        return formatter
     }
 
 }
@@ -107,6 +127,14 @@ struct Endpoint<T: Decodable> {
                 "is_private": true
             ]
         ] as NSDictionary)
+    }
+
+    static func update(timeEntry: Int64, duration: Int) -> Endpoint<TimeEntry> {
+        return Endpoint<TimeEntry>(method: "POST", url: URL.api("time_entries/\(timeEntry)"), body: [
+            "time_entry": [
+                "duration": duration
+            ]
+        ])
     }
 
 }
@@ -202,25 +230,27 @@ class TogglViewModel {
                 guard let entry = self?.current.value else { return }
                 self?.timeEntryWhenSlept = entry
                 self?.screenSleptAt = Date()
-                self?.stopTimer()
             }).disposed(by: self.disposeBag)
 
         NSWorkspace.shared.notificationCenter
             .rx.notification(NSWorkspace.screensDidWakeNotification)
             .subscribe(onNext: {[weak self] _ in
                 self?.awake.value = true
+
+                defer {
+                    self?.screenSleptAt = nil
+                    self?.timeEntryWhenSlept = nil
+                }
+
                 guard
                     let date = self?.screenSleptAt,
                     let timer = self?.timeEntryWhenSlept,
-                    Date().timeIntervalSince(date) < 60 * 10
+                    Date().timeIntervalSince(date) > 60 * 10
                 else {
-                    self?.screenSleptAt = nil
-                    self?.timeEntryWhenSlept = nil
                     return
                 }
 
-                self?.input.value = timer.description ?? ""
-                self?.startTimer()
+                self?.stopTimer(entry: timer, stoppedAt: date)
             }).disposed(by: self.disposeBag)
 
     }
@@ -283,10 +313,17 @@ class TogglViewModel {
             .disposed(by: self.disposeBag)
     }
 
-    func stopTimer() {
+    func stopTimer(entry: TimeEntry? = nil, stoppedAt: Date? = nil) {
         guard let token = self.token.value else { return }
-        guard let entryId = self.current.value?.id else { return }
-        Endpoint<TimeEntry>.stop(timeEntry: entryId).request(with: token)
+        guard let entry = entry ?? self.current.value else { return }
+        Endpoint<TimeEntry>.stop(timeEntry: entry.id).request(with: token)
+            .flatMap({ entry -> Observable<TimeEntry> in
+                if let stopped = stoppedAt {
+                    let duration = Int(stopped.timeIntervalSince(entry.start))
+                    return Endpoint<TimeEntry>.update(timeEntry: entry.id, duration: duration).request(with: token)
+                }
+                return .just(entry)
+            })
             .map({_ in nil})
             .catchErrorJustReturn(nil)
             .bind(to: current)
@@ -388,11 +425,8 @@ class ViewController: NSViewController {
             self.selectedRow = 0
         }).disposed(by: self.disposeBag)
 
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-
         viewModel.current.asDriver().flatMapLatest({ entry -> Driver<String> in
-            guard let start = entry?.start, let date = df.date(from: start) else { return .empty() }
+            guard let date = entry?.start else { return .empty() }
             return Driver<Int>.interval(1).startWith(1).map({ _ in
                 let time: Int = Int(Date().timeIntervalSince(date))
                 let hours = time / 3600
