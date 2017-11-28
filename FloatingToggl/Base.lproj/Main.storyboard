@@ -303,6 +303,12 @@
                                                 <action selector="reminder5minTapped:" target="Voe-Tx-rLC" id="Wyl-dO-evG"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="15 min" id="31U-4c-cuC">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="reminder15minTapped:" target="Voe-Tx-rLC" id="0KX-yg-Vht"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="30 min" id="R4o-n2-Eq4">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
@@ -347,6 +353,7 @@
                 <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="In_Time" customModuleProvider="target">
                     <connections>
                         <outlet property="autoApply" destination="ho0-J6-R08" id="tBW-iT-pGt"/>
+                        <outlet property="fifteenMinuteReminder" destination="31U-4c-cuC" id="AFh-yY-wvS"/>
                         <outlet property="fiveMinuteReminder" destination="OY7-WF-poV" id="tab-3t-lh3"/>
                         <outlet property="noReminder" destination="LE2-aR-0XJ" id="73T-RG-g3y"/>
                         <outlet property="thirtyMinuteReminder" destination="R4o-n2-Eq4" id="eOc-0v-Xgl"/>

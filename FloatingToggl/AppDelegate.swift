@@ -36,6 +36,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var reminderInterval: Int = 0 {
         didSet {
             fiveMinuteReminder.isChecked = reminderInterval == 5
+            fifteenMinuteReminder.isChecked = reminderInterval == 15
             thirtyMinuteReminder.isChecked = reminderInterval == 30
             noReminder.isChecked = reminderInterval == 0
             if reminderInterval != oldValue {
@@ -46,11 +47,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @IBOutlet weak var fiveMinuteReminder: NSMenuItem!
+    @IBOutlet weak var fifteenMinuteReminder: NSMenuItem!
     @IBOutlet weak var thirtyMinuteReminder: NSMenuItem!
     @IBOutlet weak var noReminder: NSMenuItem!
 
     @IBAction func reminder5minTapped(_ sender: NSMenuItem) {
         reminderInterval = 5
+    }
+
+    @IBAction func reminder15minTapped(_ sender: NSMenuItem) {
+        reminderInterval = 15
     }
 
     @IBAction func reminder30minTapped(_ sender: NSMenuItem) {

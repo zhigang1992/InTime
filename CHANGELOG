@@ -1,6 +1,10 @@
 Changelog
 ---------------
 
+### 1.1.1
+
+* Not stealing user focus when showing reminder
+* Adding 15 min as reminder interval
 
 ### 1.1.0
 
